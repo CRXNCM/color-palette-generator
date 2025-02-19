@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Color Palette</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Color Palette</h1>
+        <div class="controls">
+            <input type="number" id="colorCount" min="2" max="8" value="4">
+            <input type="text" id="customHex" placeholder="Enter hex code...">
+            <button id="addColor">Add Color</button>
+        </div>
+        <div class="color-palette" id="colorPalette">
+            <!-- Colors will be added dynamically -->
+        </div>
+        <button id="generate-btn">Generate Palette</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
