@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color List | Color Palette Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.html">
+                    <h1>Color Palette</h1>
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="color-list.html" class="nav-link active">Colors</a>
+                <a href="browse-gradient.html" class="nav-link">Browse Gradients</a>
+                <a href="create-gradient.html" class="nav-link">Create Gradient</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="content">
+        <div class="color-list-container" id="colorList">
+            <!-- Color cards will be generated here -->
+        </div>
+        <div class="loading-spinner" id="loader">
+            <div class="spinner"></div>
+        </div>
+    </main>
+
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #242424;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #4f46e5;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo a {
+            text-decoration: none;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, #4f46e5, #9333ea);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: #a0a0a0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+        }
+
+        .nav-link.active {
+            color: #ffffff;
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            padding-top: 80px; /* Creates space for fixed header */
+        }
+
+        .color-list-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .color-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .color-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .color-preview {
+            height: 150px;
+            width: 100%;
+        }
+
+        .color-info {
+            padding: 1.2rem;
+        }
+
+        .color-info h3 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .color-info p {
+            color: var(--text-secondary);
+            margin: 0.5rem 0;
+        }
+
+        .copy-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 100%;
+            margin-top: 0.8rem;
+        }
+
+        .copy-btn:hover {
+            background: #4338ca;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 3px solid var(--bg-secondary);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        const colorList = document.getElementById('colorList');
+        const loader = document.getElementById('loader');
+        
+        // Color names and their hex codes
+        const colors = [
+            { name: 'Ruby Red', hex: '#E0115F' },
+            { name: 'Sapphire Blue', hex: '#0F52BA' },
+            { name: 'Emerald Green', hex: '#50C878' },
+            { name: 'Royal Purple', hex: '#7851A9' },
+            { name: 'Sunset Orange', hex: '#FD5E53' },
+            // Add more initial colors here
+        ];
+
+        function createColorCard(color) {
+            const card = document.createElement('div');
+            card.className = 'color-card';
+            card.innerHTML = `
+                <div class="color-preview" style="background-color: ${color.hex}"></div>
+                <div class="color-info">
+                    <h3>${color.name}</h3>
+                    <p>${color.hex}</p>
+                    <button onclick="copyHex('${color.hex}')" class="copy-btn">Copy Hex</button>
+                </div>
+            `;
+            return card;
+        }
+
+        function copyHex(hex) {
+            navigator.clipboard.writeText(hex);
+            // Show feedback
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.textContent = 'Copied!';
+            document.body.appendChild(tooltip);
+            setTimeout(() => tooltip.remove(), 2000);
+        }
+
+        function generateRandomColor() {
+            const hue = Math.floor(Math.random() * 360);
+            const saturation = Math.floor(Math.random() * 30) + 70; // 70-100%
+            const lightness = Math.floor(Math.random() * 30) + 35; // 35-65%
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+
+        function generateColorName() {
+            const adjectives = ['Vibrant', 'Deep', 'Soft', 'Rich', 'Bright', 'Dark', 'Light', 'Muted'];
+            const colors = ['Red', 'Blue', 'Green', 'Purple', 'Yellow', 'Orange', 'Pink', 'Teal'];
+            return `${adjectives[Math.floor(Math.random() * adjectives.length)]} ${colors[Math.floor(Math.random() * colors.length)]}`;
+        }
+
+        function loadMoreColors() {
+            loader.style.display = 'block';
+            setTimeout(() => {
+                for (let i = 0; i < 20; i++) {
+                    const color = {
+                        name: generateColorName(),
+                        hex: generateRandomColor()
+                    };
+                    colorList.appendChild(createColorCard(color));
+                }
+                loader.style.display = 'none';
+            }, 500);
+        }
+
+        // Initial load
+        loadMoreColors();
+
+        // Infinite scroll
+        window.addEventListener('scroll', () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1000) {
+                loadMoreColors();
+            }
+        });
+    </script>
+</body>
+</html>

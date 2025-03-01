@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Gradients | Color Palette Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.html">
+                    <h1>Color Palette</h1>
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="color-list.html" class="nav-link">Colors</a>
+                <a href="browse-gradient.html" class="nav-link active">Browse Gradients</a>
+                <a href="create-gradient.html" class="nav-link">Create Gradient</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="content">
+        <div class="gradient-list-container" id="gradientList">
+            <!-- Gradient cards will be generated here -->
+        </div>
+        <div class="loading-spinner" id="loader">
+            <div class="spinner"></div>
+        </div>
+    </main>
+
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #242424;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #4f46e5;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            padding-top: 80px;
+        }
+
+        /* Header styles from index.html */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        /* Navigation styles */
+        .logo a { text-decoration: none; }
+        .logo h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, #4f46e5, #9333ea);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+        }
+        .nav-link:hover { color: var(--text-primary); }
+        .nav-link.active {
+            color: var(--text-primary);
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        /* Gradient grid layout */
+        .gradient-list-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .gradient-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gradient-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .gradient-preview {
+            height: 200px;
+            width: 100%;
+        }
+
+        .gradient-info {
+            padding: 1.2rem;
+        }
+
+        .gradient-colors {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .gradient-angle {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .copy-btn, .save-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            flex: 1;
+        }
+
+        .save-btn {
+            background: transparent;
+            border: 1px solid var(--accent);
+        }
+
+        .copy-btn:hover {
+            background: #4338ca;
+        }
+
+        .save-btn:hover {
+            background: rgba(79, 70, 229, 0.1);
+        }
+    </style>
+      <script>
+          const gradientList = document.getElementById('gradientList');
+        
+          // Sample gradient data
+          const gradients = [
+              {
+                  startColor: '#4f46e5',
+                  endColor: '#9333ea',
+                  angle: '45deg',
+                  name: 'Purple Dream'
+              },
+              {
+                  startColor: '#06b6d4',
+                  endColor: '#3b82f6',
+                  angle: '60deg',
+                  name: 'Ocean Blue'
+              },
+              // Add more gradients here
+          ];
+
+          function createGradientCard(gradient) {
+              const card = document.createElement('div');
+              card.className = 'gradient-card';
+            
+              card.innerHTML = `
+                  <div class="gradient-preview" style="background: linear-gradient(${gradient.angle}, ${gradient.startColor}, ${gradient.endColor})"></div>
+                  <div class="gradient-info">
+                      <div class="color-control">
+                          <input type="color" 
+                               value="${gradient.startColor}" 
+                               class="color-picker"
+                               data-position="start">
+                          <span>${gradient.startColor}</span>
+                      </div>
+                      <div class="color-control">
+                          <input type="color" 
+                               value="${gradient.endColor}" 
+                               class="color-picker"
+                               data-position="end">
+                          <span>${gradient.endColor}</span>
+                      </div>
+                      <input type="range" 
+                           min="0" 
+                           max="360" 
+                           value="${parseInt(gradient.angle)}" 
+                           class="angle-slider">
+                      <div class="button-group">
+                          <button class="copy-btn">Copy CSS</button>
+                          <button class="save-btn">Save</button>
+                      </div>
+                  </div>
+              `;
+
+              // Add real-time update listeners
+              const preview = card.querySelector('.gradient-preview');
+              const colorPickers = card.querySelectorAll('.color-picker');
+              const angleSlider = card.querySelector('.angle-slider');
+
+              function updateGradient() {
+                  const startColor = colorPickers[0].value;
+                  const endColor = colorPickers[1].value;
+                  const angle = angleSlider.value;
+                  preview.style.background = `linear-gradient(${angle}deg, ${startColor}, ${endColor})`;
+                
+                  // Update color display texts
+                  colorPickers.forEach((picker, index) => {
+                      picker.nextElementSibling.textContent = picker.value;
+                  });
+              }
+
+              colorPickers.forEach(picker => {
+                  picker.addEventListener('input', updateGradient);
+              });
+
+              angleSlider.addEventListener('input', updateGradient);
+
+              return card;
+          }
+
+          function copyGradient(gradientStyle) {
+              navigator.clipboard.writeText(`background: ${gradientStyle};`);
+              // Add copy feedback here
+          }
+
+          function saveGradient(name) {
+              // Implement save functionality
+              console.log(`Saved gradient: ${name}`);
+          }
+
+          // Initial load
+          gradients.forEach(gradient => {
+              gradientList.appendChild(createGradientCard(gradient));
+          });
+      </script>
+  </body>
+</html>
