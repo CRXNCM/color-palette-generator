@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extract Color Palette from Image</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.html">
+                    <h1>Color Palette</h1>
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="color-list.html" class="nav-link">Colors</a>
+                <a href="browse-gradient.html" class="nav-link">Browse Gradients</a>
+                <a href="create-gradient.html" class="nav-link">Create Gradient</a>
+                <a href="extract-palette.html" class="nav-link active">Extract Colors</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="main-section">
+            <h2 class="section-title">Extract Colors from Image</h2>
+            
+            <div class="upload-container" id="upload-container">
+                <div class="upload-area" id="upload-area">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text">Drag & drop an image or click to browse</p>
+                    <input type="file" id="image-upload" accept="image/*" hidden>
+                </div>
+                <button class="btn-primary" id="upload-btn">
+                    <i class="fas fa-upload"></i> Upload Image
+                </button>
+            </div>
+            
+            <div class="image-preview-container" id="image-preview-container" style="display: none;">
+                <div class="image-preview-wrapper">
+                    <img id="image-preview" src="" alt="Uploaded image">
+                </div>
+                <div class="extraction-controls">
+                    <div class="control-group">
+                        <label for="color-count">Number of Colors:</label>
+                        <input type="range" id="color-count" min="2" max="10" value="5" step="1">
+                        <span id="color-count-value">5</span>
+                    </div>
+                    <button class="btn-primary" id="extract-btn">
+                        <i class="fas fa-magic"></i> Extract Colors
+                    </button>
+                </div>
+            </div>
+            
+            <div class="extracted-palette-container" id="extracted-palette-container" style="display: none;">
+                <h3>Extracted Color Palette</h3>
+                <div class="color-palette" id="extracted-palette">
+                    <!-- Colors will be added dynamically -->
+                </div>
+                <div class="palette-actions">
+                    <button id="save-palette" class="btn-secondary">
+                        <i class="fas fa-save"></i> Save Palette
+                    </button>
+                    <button id="copy-palette" class="btn-secondary">
+                        <i class="fas fa-copy"></i> Copy Colors
+                    </button>
+                    <button id="try-again" class="btn-secondary">
+                        <i class="fas fa-redo"></i> Try Another Image
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+    <script src="extract-palette.js"></script>
+</body>
+</html>

@@ -9,82 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <style>
-        :root {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #242424;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --accent: #4f46e5;
-        }
-    
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            padding-top: 80px;
-        }
-    
-        .main-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(26, 26, 26, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 1rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-    
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-        }
-    
-        .logo a {
-            text-decoration: none;
-        }
-    
-        .logo h1 {
-            font-size: 1.5rem;
-            background: linear-gradient(45deg, #4f46e5, #9333ea);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0;
-        }
-    
-        .nav-menu {
-            display: flex;
-            gap: 2rem;
-        }
-    
-        .nav-link {
-            color: #a0a0a0;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-        }
-    
-        .nav-link:hover {
-            color: #ffffff;
-        }
-    
-        .nav-link.active {
-            color: #ffffff;
-            background: rgba(79, 70, 229, 0.1);
-        }
-    </style>
-    
     <header class="main-header">
         <div class="header-content">
             <div class="logo">
@@ -97,20 +21,43 @@
                 <a href="color-list.html" class="nav-link">Colors</a>
                 <a href="browse-gradient.html" class="nav-link">Browse Gradients</a>
                 <a href="create-gradient.html" class="nav-link">Create Gradient</a>
+                <a href="extract-palette.html" class="nav-link">Extract Colors</a>
             </nav>
         </div>
     </header>
     <div class="container">
         <section class="main-section">
-            <div class="controls">
-                <input type="number" id="colorCount" min="2" max="8" value="4">
-                <input type="text" id="customHex" placeholder="Enter hex code...">
-                <button id="addColor">Add Color</button>
+            <h2 class="section-title">Create Your Palette</h2>
+            
+            <div class="controls-wrapper">
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="colorCount">Number of Colors:</label>
+                        <input type="number" id="colorCount" min="2" max="8" value="4" title="Number of colors to generate">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="customHex">Custom Color:</label>
+                        <div class="hex-input-group">
+                            <input type="text" id="customHex" placeholder="Enter hex code (e.g. #4f46e5)">
+                            <button id="addColor" class="btn-secondary">Add</button>
+                        </div>
+                    </div>
+                    
+                    <button id="generate-btn" class="btn-primary">Generate New Palette</button>
+                </div>
             </div>
-            <div class="color-palette" id="colorPalette">
-                <!-- Colors will be added dynamically -->
+            
+            <div class="color-palette-container">
+                <div class="color-palette" id="colorPalette">
+                    <!-- Colors will be added dynamically -->
+                </div>
             </div>
-            <button id="generate-btn">Generate Palette</button>
+            
+            <div id="palette-actions" class="palette-actions">
+                <button id="save-palette" class="btn-secondary"><i class="fas fa-save"></i> Save Palette</button>
+                <button id="copy-palette" class="btn-secondary"><i class="fas fa-copy"></i> Copy Colors</button>
+            </div>
         </section>
 
         <section class="tools-section" id="tools">

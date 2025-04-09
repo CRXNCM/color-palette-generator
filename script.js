@@ -1,150 +1,49 @@
-class ColorPalette {
+class GradientGenerator {
     constructor() {
         this.colors = [];
-        this.lockedColors = new Set();
         this.setup();
     }
 
     setup() {
-        this.palette = document.getElementById('colorPalette');
+        this.gradientDisplay = document.getElementById('gradientDisplay');
         this.colorCount = document.getElementById('colorCount');
         this.customHex = document.getElementById('customHex');
         this.addColorBtn = document.getElementById('addColor');
         this.generateBtn = document.getElementById('generate-btn');
 
-        // Initialize Sortable
-        Sortable.create(this.palette, {
-            animation: 150,
-            onEnd: () => this.updateColorsArray()
-        });
-
-        // Event Listeners
-        this.generateBtn.addEventListener('click', () => this.generatePalette());
-        this.colorCount.addEventListener('change', () => this.updateColorCount());
         this.addColorBtn.addEventListener('click', () => this.addCustomColor());
-
-        this.generateInitialPalette();
-    }
-
-    generateRandomColor() {
-        const letters = '0123456789ABCDEF';
-        let color = '#';
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
-
-    createColorBox(color) {
-        const box = document.createElement('div');
-        box.className = 'color-box';
-        box.innerHTML = `
-            <div class="color" style="background-color: ${color}"></div>
-            <button class="lock-btn"><i class="fas fa-unlock"></i></button>
-            <span class="hex-code">${color}</span>
-        `;
-
-        const lockBtn = box.querySelector('.lock-btn');
-        lockBtn.addEventListener('click', () => this.toggleLock(color, lockBtn));
-
-        box.querySelector('.color').onclick = () => this.copyToClipboard(color);
-        box.querySelector('.hex-code').onclick = () => this.copyToClipboard(color);
-
-        return box;
-    }
-
-    toggleLock(color, btn) {
-        if (this.lockedColors.has(color)) {
-            this.lockedColors.delete(color);
-            btn.innerHTML = '<i class="fas fa-unlock"></i>';
-            btn.classList.remove('locked');
-        } else {
-            this.lockedColors.add(color);
-            btn.innerHTML = '<i class="fas fa-lock"></i>';
-            btn.classList.add('locked');
-        }
-    }
-
-    generatePalette() {
-        const count = parseInt(this.colorCount.value);
-        this.colors = [];
-        this.palette.innerHTML = '';
-
-        // Keep locked colors
-        const lockedColors = Array.from(this.lockedColors);
-        lockedColors.forEach(color => {
-            this.colors.push(color);
-            this.palette.appendChild(this.createColorBox(color));
-        });
-
-        // Add new random colors
-        while (this.colors.length < count) {
-            const color = this.generateRandomColor();
-            if (!this.colors.includes(color)) {
-                this.colors.push(color);
-                this.palette.appendChild(this.createColorBox(color));
-            }
-        }
-
-        this.updateBackground();
-    }
-
-    updateColorCount() {
-        this.generatePalette();
+        this.generateBtn.addEventListener('click', () => this.generateGradient());
+        
+        // Initialize with default colors
+        this.colors = ['#FF5733', '#33FF57'];
+        this.updateGradient();
     }
 
     addCustomColor() {
-        let color = this.customHex.value;
-        if (!/^#[0-9A-F]{6}$/i.test(color)) {
-            color = '#' + color.replace(/[^0-9A-F]/gi, '');
-            if (!/^#[0-9A-F]{6}$/i.test(color)) {
-                alert('Please enter a valid hex color code');
-                return;
-            }
-        }
-
-        if (this.colors.length < 8) {
+        const color = this.customHex.value;
+        if (color.match(/^#[0-9A-Fa-f]{6}$/)) {
             this.colors.push(color);
-            this.palette.appendChild(this.createColorBox(color));
-            this.updateBackground();
+            this.updateGradient();
             this.customHex.value = '';
         }
     }
 
-    updateColorsArray() {
-        const newColors = [];
-        this.palette.querySelectorAll('.hex-code').forEach(span => {
-            newColors.push(span.textContent);
-        });
-        this.colors = newColors;
-        this.updateBackground();
+    generateGradient() {
+        this.colors = Array.from({length: parseInt(this.colorCount.value)}, 
+            () => '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'));
+        this.updateGradient();
     }
 
-    updateBackground() {
-        document.body.style.background = `linear-gradient(45deg, ${this.colors.join(', ')})`;
-        document.body.style.backgroundSize = '400% 400%';
-        document.body.style.animation = 'gradientAnimation 15s ease infinite';
-    }
-
-    copyToClipboard(text) {
-        navigator.clipboard.writeText(text)
-            .then(() => {
-                alert(`Copied ${text} to clipboard!`);
-            })
-            .catch(err => {
-                console.error('Failed to copy text: ', err);
-            });
-    }
-
-    generateInitialPalette() {
-        this.generatePalette();
+    updateGradient() {
+        const gradient = `linear-gradient(45deg, ${this.colors.join(', ')})`;
+        this.gradientDisplay.style.background = gradient;
     }
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new ColorPalette();
-});
+// Initialize the gradient generator when on the create-gradient page
+if (document.getElementById('gradientDisplay')) {
+    new GradientGenerator();
+}
 // Add this to your existing JavaScript
 class LayoutManager {
     constructor(palette) {
@@ -192,7 +91,119 @@ class LayoutManager {
 }
 
 // Initialize LayoutManager in your existing code
-document.addEventListener('DOMContentLoaded', () => {
-    const colorPalette = new ColorPalette();
-    const layoutManager = new LayoutManager(colorPalette);
+document.addEventListener('DOMContentLoaded', function() {
+    const colorPalette = document.getElementById('colorPalette');
+    const generateBtn = document.getElementById('generate-btn');
+    const colorCount = document.getElementById('colorCount');
+    const customHex = document.getElementById('customHex');
+    const addColorBtn = document.getElementById('addColor');
+    const paletteActions = document.getElementById('palette-actions');
+    const savePaletteBtn = document.getElementById('save-palette');
+    const copyPaletteBtn = document.getElementById('copy-palette');
+    
+    // Generate random color in hex format
+    function generateRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+    
+    // Create a color swatch element
+    function createColorSwatch(color) {
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch';
+        swatch.style.backgroundColor = color;
+        
+        const hexValue = document.createElement('span');
+        hexValue.className = 'hex-value';
+        hexValue.textContent = color.toUpperCase();
+        
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+        copyBtn.title = 'Copy to clipboard';
+        copyBtn.addEventListener('click', function() {
+            navigator.clipboard.writeText(color).then(() => {
+                // Show copied notification
+                const notification = document.createElement('div');
+                notification.className = 'copy-notification';
+                notification.textContent = 'Copied!';
+                swatch.appendChild(notification);
+                setTimeout(() => notification.remove(), 1000);
+            });
+        });
+        
+        swatch.appendChild(hexValue);
+        swatch.appendChild(copyBtn);
+        return swatch;
+    }
+    
+    // Generate a new palette
+    function generatePalette() {
+        colorPalette.innerHTML = '';
+        const count = parseInt(colorCount.value);
+        
+        for (let i = 0; i < count; i++) {
+            const color = generateRandomColor();
+            const swatch = createColorSwatch(color);
+            colorPalette.appendChild(swatch);
+        }
+        
+        // Show palette actions
+        paletteActions.style.display = 'flex';
+        
+        // Make palette sortable
+        new Sortable(colorPalette, {
+            animation: 150,
+            ghostClass: 'sortable-ghost'
+        });
+    }
+    
+    // Add custom color
+    function addCustomColor() {
+        const hexCode = customHex.value.trim();
+        // Basic validation for hex code
+        if (/^#?[0-9A-Fa-f]{6}$/.test(hexCode)) {
+            const color = hexCode.startsWith('#') ? hexCode : '#' + hexCode;
+            const swatch = createColorSwatch(color);
+            colorPalette.appendChild(swatch);
+            customHex.value = '';
+            
+            // Show palette actions
+            paletteActions.style.display = 'flex';
+        } else {
+            alert('Please enter a valid hex color code (e.g. #4f46e5 or 4f46e5)');
+        }
+    }
+    
+    // Event listeners
+    generateBtn.addEventListener('click', generatePalette);
+    addColorBtn.addEventListener('click', addCustomColor);
+    
+    // Copy all colors
+    copyPaletteBtn.addEventListener('click', function() {
+        const hexValues = Array.from(document.querySelectorAll('.hex-value'))
+            .map(span => span.textContent)
+            .join(', ');
+        
+        navigator.clipboard.writeText(hexValues).then(() => {
+            alert('All colors copied to clipboard!');
+        });
+    });
+    
+    // Save palette (basic implementation)
+    savePaletteBtn.addEventListener('click', function() {
+        const hexValues = Array.from(document.querySelectorAll('.hex-value'))
+            .map(span => span.textContent);
+        
+        // In a real app, you would save this to localStorage or a database
+        localStorage.setItem('savedPalette', JSON.stringify(hexValues));
+        alert('Palette saved!');
+    });
+    
+    // Generate initial palette
+    generatePalette();
 });
